@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
@@ -17,12 +18,10 @@ public class Cc {
 
     private Stage mMainStage, mSaturationStage;
     private ImageView imgView; // Value injected by FXMLLoader
-    private Image img, imgUndo;
-    private int mPointTemp;
-   // private boolean bFirstUndo = true;
-    public static final int MAX_UNDOS = 100;
+    private Image img;
 
-    private static List<Image> backImages;
+    private static Stack<Image> undoImages;
+    private static Stack<Image> redoImages;
 
     private Cc(){
 
@@ -31,7 +30,8 @@ public class Cc {
     public static Cc getInstance(){
         if(stateManager == null){
             stateManager = new Cc();
-            backImages = new LinkedList<>();
+            undoImages = new Stack<>();
+            redoImages = new Stack<>();
         }
         return stateManager;
     }
@@ -102,24 +102,25 @@ public class Cc {
     }
 
     public void undo(){
-
-        if (imgUndo != null){
-            this.img = imgUndo;
+        if(!undoImages.isEmpty()){
+            redoImages.push(this.img);
+            this.img = undoImages.pop();
             imgView.setImage(img);
         }
-
     }
 
     public void redo(){
-
-   }
+        if(!redoImages.isEmpty()){
+            undoImages.push(this.img);
+            this.img = redoImages.pop();
+            imgView.setImage(img);
+        }
+    }
 
     public void setImageAndRefreshView(Image img){
-        imgUndo = this.img;
+        undoImages.push(this.img);
         this.img = img;
         imgView.setImage(img);
-
-
     }
 
     public void close(){

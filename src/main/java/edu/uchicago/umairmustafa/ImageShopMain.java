@@ -14,15 +14,14 @@ public class ImageShopMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        //Stage
-        //Scene
         //Root
-
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/imageshop.fxml"));
 
+        //Scene
         Scene scene = new Scene(root);
-        //scene.getStylesheets().add("/styles/first.css");
+        scene.getStylesheets().add("/styles/styles.css");
 
+        //Stage
         stage.setTitle("ImageShop");
         stage.setScene(scene);
         stage.show();
