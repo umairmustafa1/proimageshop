@@ -41,7 +41,6 @@
                         <MenuItem mnemonicParsing="false" text="Select All"/>
                         <MenuItem mnemonicParsing="false" text="Unselect All"/>
                         <MenuItem mnemonicParsing="false" onAction="#mnuSaturate" text="Saturate"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuGrayscale" text="GrayScale"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -74,7 +73,6 @@
                                         <ToggleButton id = "pencil" fx:id="tgbPencil" mnemonicParsing="false" text="ToggleButton"/>
                                         <ToggleButton id = "pen" fx:id="tgbPen" mnemonicParsing="false" text="ToggleButton"/>
                                         <ToggleButton id = "sqrmarquee" fx:id="tgbSqrMarquee" mnemonicParsing="false" text="ToggleButton"/>
-                                        <ToggleButton id = "cirmarquee" fx:id="tgbCirMarquee" mnemonicParsing="false" text="ToggleButton"/>
                                         <ToggleButton id = "bucket" fx:id="tgbBucket" mnemonicParsing="false" text="ToggleButton"/>
                                         <ToggleButton id = "dropper" fx:id="tgbDropper" mnemonicParsing="false" text="ToggleButton"/>
                                     </children>

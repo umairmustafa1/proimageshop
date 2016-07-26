@@ -10,10 +10,6 @@
     -fx-graphic: url('../images/sqrmarquee.png');
 }
 
-#cirmarquee {
-    -fx-graphic: url('../images/cirmarquee.png');
-}
-
 #bucket {
     -fx-graphic: url('../images/bucket.png');
 }

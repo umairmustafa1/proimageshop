@@ -19,7 +19,7 @@ public class Cc {
     private static Cc stateManager;
 
     private Stage mMainStage, mSaturationStage;
-    private ImageView imgView; // Value injected by FXMLLoader
+    private ImageView imgView;
     private Image img;
 
     private BooleanProperty hasNoImage = new SimpleBooleanProperty(true);
