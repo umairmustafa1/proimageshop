@@ -1,0 +1,25 @@
+#pencil {
+    -fx-graphic: url('../images/pencil.png');
+}
+
+#pen {
+    -fx-graphic: url('../images/pen.png');
+}
+
+#sqrmarquee {
+    -fx-graphic: url('../images/sqrmarquee.png');
+}
+
+#cirmarquee {
+    -fx-graphic: url('../images/cirmarquee.png');
+}
+
+#bucket {
+    -fx-graphic: url('../images/bucket.png');
+}
+
+#dropper {
+    -fx-graphic: url('../images/dropper.png');
+}
+
+

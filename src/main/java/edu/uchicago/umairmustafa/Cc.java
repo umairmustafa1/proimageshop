@@ -1,5 +1,7 @@
 package edu.uchicago.umairmustafa;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -19,6 +21,8 @@ public class Cc {
     private Stage mMainStage, mSaturationStage;
     private ImageView imgView; // Value injected by FXMLLoader
     private Image img;
+
+    private BooleanProperty hasNoImage = new SimpleBooleanProperty(true);
 
     private static Stack<Image> undoImages;
     private static Stack<Image> redoImages;
@@ -101,6 +105,10 @@ public class Cc {
         return img;
     }
 
+    public BooleanProperty hasImgProperty() {
+        return hasNoImage;
+    }
+
     public void undo(){
         if(!undoImages.isEmpty()){
             redoImages.push(this.img);
@@ -118,13 +126,13 @@ public class Cc {
     }
 
     public void setImageAndRefreshView(Image img){
+        hasImgProperty().setValue(false);
         undoImages.push(this.img);
         this.img = img;
         imgView.setImage(img);
     }
 
     public void close(){
-
         imgView.setImage(null);
     }
 }
