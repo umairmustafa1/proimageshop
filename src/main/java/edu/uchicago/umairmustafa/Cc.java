@@ -18,7 +18,7 @@ public class Cc {
 
     private static Cc stateManager;
 
-    private Stage mMainStage, mSaturationStage;
+    private Stage mMainStage;
     private ImageView imgView;
     private Image img;
 
@@ -72,8 +72,7 @@ public class Cc {
                 width, height);
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
-                out.getPixelWriter().setColor(x, y,
-                        f.apply(x, y, in.getPixelReader().getColor(x, y)));
+                out.getPixelWriter().setColor(x, y, f.apply(x, y, in.getPixelReader().getColor(x, y)));
         return out;
     }
 
@@ -83,14 +82,6 @@ public class Cc {
 
     public void setMainStage(Stage mMainStage) {
         this.mMainStage = mMainStage;
-    }
-
-    public Stage getSaturationStage() {
-        return mSaturationStage;
-    }
-
-    public void setSaturationStage(Stage mSaturationStage) {
-        this.mSaturationStage = mSaturationStage;
     }
 
     public ImageView getImgView() {

@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -42,7 +43,7 @@ import java.util.logging.Logger;
 public class ImageShopController implements Initializable {
 
     public enum FilterStyle {
-        SAT, DRK, GS;
+        DRK, BRI, SAT, DESAT, OPA, TRA, HUE, DEHUE, GS, INV, SEP;
     }
     public enum Tool {
         PEN, PENCIL, SQRMARQUEE, BUCKET, DROPPER;
@@ -58,7 +59,11 @@ public class ImageShopController implements Initializable {
     private double xAnchor, yAnchor;//position of mouse for anchor using marquee tool
     ArrayList<Shape> removeShapes = new ArrayList<>(1000);
 
-    Rectangle selectionRect;
+    private Rectangle selectionRect;
+    private final double DARKER_BRIGHTER_FACTOR = 0.5;
+    private final double SATURATE_DESATURATE_FACTOR = 0.5;
+    private final double OPACITY_FACTOR = 0.5;
+    private final double HUE_SHIFT = 20;
 
     @FXML private ToggleButton tgbPencil;
     @FXML private ToggleButton tgbPen;
@@ -89,9 +94,11 @@ public class ImageShopController implements Initializable {
 
         try {
             BufferedImage bufferedImage = ImageIO.read(file);
+            ancRoot.getChildren().remove(selectionRect);
             Cc.getInstance().setImageAndRefreshView(SwingFXUtils.toFXImage(bufferedImage, null));
+
             //Setting Selection to image after loading it
-            selectionRect = new Rectangle(0, 0, imgView.getImage().getWidth(),imgView.getFitHeight());
+            selectionRect = new Rectangle(0, 0, imgView.getImage().getWidth(),imgView.getImage().getHeight());
             selectionRect.setFill(null);
             selectionRect.setVisible(false);
         } catch (IOException ex) {
@@ -127,25 +134,6 @@ public class ImageShopController implements Initializable {
     void mnuRedo(ActionEvent event) {
         Cc.getInstance().redo();
     }
-    @FXML
-    void mnuSaturate(ActionEvent event) {
-
-        Cc.getInstance().setImgView(this.imgView);
-
-        Stage dialogStage = new Stage();
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(getClass().getResource("/fxml/saturation.fxml"));
-            Scene scene = new Scene(root);
-            dialogStage.setTitle("Saturation");
-            dialogStage.setScene(scene);
-            //set the stage so that I can close it later.
-            Cc.getInstance().setSaturationStage(dialogStage);
-            dialogStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     //##################################################################
     //INITIALIZE METHOD
@@ -166,7 +154,7 @@ public class ImageShopController implements Initializable {
         mColor = Color.WHITE;
 
         //Setting Combo Values
-        cboSome.getItems().addAll("Darker", "Saturate", "GreyScale");
+        cboSome.getItems().addAll("Darker", "Brighter", "Saturate", "De-Saturate", "Opaque", "Transparent", "Hue", "De-Hue", "GreyScale", "Invert", "Sepia");
         cboSome.setValue("Darker");
 
         //Setting Selection to image view in the start
@@ -322,32 +310,144 @@ public class ImageShopController implements Initializable {
                 case DRK://Darker
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
-                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1, .5, 1) : c
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1, DARKER_BRIGHTER_FACTOR, 1) : c
+                    );
+                    break;
+
+                case BRI://Brighter
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1, 1.0 / DARKER_BRIGHTER_FACTOR, 1) : c
                     );
                     break;
 
                 case SAT://Saturate
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
-                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0 / .1, 1.0, 1.0) : c
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0 / SATURATE_DESATURATE_FACTOR, 1.0, 1.0) : c
+
+                    );
+                    break;
+
+                case DESAT://De-Saturate
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, SATURATE_DESATURATE_FACTOR, 1.0, 1.0) : c
+
+                    );
+                    break;
+
+                case OPA://Opaque
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0, 1.0, OPACITY_FACTOR) : c
+
+                    );
+                    break;
+
+                case TRA://Transparent
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0, 1.0, 1.0 / OPACITY_FACTOR) : c
+
+                    );
+                    break;
+
+                case HUE://Hue
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(HUE_SHIFT, 1.0, 1.0, 1.0) : c
+
+                    );
+                    break;
+
+                case DEHUE://De-Hue
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(-1 * HUE_SHIFT, 1.0, 1.0, 1.0) : c
 
                     );
                     break;
 
                 case GS://GreyScale
-                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(), Color::grayscale);
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.grayscale() : c
+
+                    );
+                    break;
+
+                case INV://Invert
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.invert() : c
+
+                    );
+                    break;
+
+                case SEP://Sepia
+                    transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
+                            (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? getSepiaColor(c) : c
+
+                    );
                     break;
 
                 default://Darker
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
-                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1, .5, 1) : c
+                                    && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1, DARKER_BRIGHTER_FACTOR, 1) : c
                     );
                     break;
             }
             Cc.getInstance().setImageAndRefreshView(transformImage);
         });
         //endregion
+
+        cboSome.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                switch (newValue){
+                    case "Darker":
+                        mFilterStyle = FilterStyle.DRK;
+                        break;
+                    case "Brighter":
+                        mFilterStyle = FilterStyle.BRI;
+                        break;
+                    case "Saturate":
+                        mFilterStyle = FilterStyle.SAT;
+                        break;
+                    case "De-Saturate":
+                        mFilterStyle = FilterStyle.DESAT;
+                        break;
+                    case "Opaque":
+                        mFilterStyle = FilterStyle.OPA;
+                        break;
+                    case "Transparent":
+                        mFilterStyle = FilterStyle.TRA;
+                        break;
+                    case "Hue":
+                        mFilterStyle = FilterStyle.HUE;
+                        break;
+                    case "De-Hue":
+                        mFilterStyle = FilterStyle.DEHUE;
+                        break;
+                    case "GreyScale":
+                        mFilterStyle = FilterStyle.GS;
+                        break;
+                    case "Invert":
+                        mFilterStyle = FilterStyle.INV;
+                        break;
+                    case "Sepia":
+                        mFilterStyle = FilterStyle.SEP;
+                        break;
+                    default:
+                        mFilterStyle = FilterStyle.DRK;
+                        break;
+
+                }
+            }
+        });
 
         cpkColor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -364,29 +464,44 @@ public class ImageShopController implements Initializable {
             }
         });
 
-        cboSome.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                switch (newValue){
-                    case "Saturate":
-                        mFilterStyle = FilterStyle.SAT;
-                        break;
-                    case "Darker":
-                        mFilterStyle = FilterStyle.DRK;
-                        break;
-                    case "GreyScale":
-                        mFilterStyle = FilterStyle.GS;
-                        break;
-                    default:
-                        mFilterStyle = FilterStyle.DRK;
-                        break;
-
-                }
-            }
-        });
-
     }//END INIT
 
+    //http://stackoverflow.com/questions/21899824/java-convert-a-greyscale-and-sepia-version-of-an-image-with-bufferedimage
+    public static Color getSepiaColor(Color color){
+
+        int sepiaDepth = 20;
+        int sepiaIntensity = 1;
+
+        double r = color.getRed();
+        double g = color.getGreen();
+        double b = color.getBlue();
+
+        double gry = (r + g + b) / 3;
+        r = g = b = gry;
+        r = r + (sepiaDepth * 2);
+        g = g + sepiaDepth;
+
+        if (r > 255) {
+            r = 255;
+        }
+        if (g > 255) {
+            g = 255;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+
+        b -= sepiaIntensity;
+
+        if (b < 0) {
+            b = 0;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+
+        return Color.rgb((int)r, (int)g, (int)b);
+    }
     //invert
 
 //    Cc.getInstance().setSaturationLevel((int)sldSaturation.getValue());
