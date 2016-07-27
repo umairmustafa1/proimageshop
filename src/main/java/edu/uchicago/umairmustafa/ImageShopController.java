@@ -469,51 +469,19 @@ public class ImageShopController implements Initializable {
     //http://stackoverflow.com/questions/21899824/java-convert-a-greyscale-and-sepia-version-of-an-image-with-bufferedimage
     public static Color getSepiaColor(Color color){
 
-        int sepiaDepth = 20;
-        int sepiaIntensity = 1;
+        double r = color.getRed() * 255;
+        double g = color.getGreen() * 255;
+        double b = color.getBlue() * 255;
 
-        double r = color.getRed();
-        double g = color.getGreen();
-        double b = color.getBlue();
+        r = (r * 0.189) + (g * 0.769) + (b * 0.393);
+        g = (r * 0.168) + (g * 0.686) + (b * 0.349);
+        b = (r * 0.131) + (g * 0.534) + (b * 0.272);
 
-        double gry = (r + g + b) / 3;
-        r = g = b = gry;
-        r = r + (sepiaDepth * 2);
-        g = g + sepiaDepth;
-
-        if (r > 255) {
-            r = 255;
-        }
-        if (g > 255) {
-            g = 255;
-        }
-        if (b > 255) {
-            b = 255;
-        }
-
-        b -= sepiaIntensity;
-
-        if (b < 0) {
-            b = 0;
-        }
-        if (b > 255) {
-            b = 255;
-        }
+        if (r>255) r=255;
+        if (g>255) g=255;
+        if (b>255) b=255;
 
         return Color.rgb((int)r, (int)g, (int)b);
     }
-    //invert
-
-//    Cc.getInstance().setSaturationLevel((int)sldSaturation.getValue());
-//
-//
-//    int nLevel = Cc.getInstance().getSaturationLevel();
-//    double dLevel = (100-nLevel)/100;
-//
-//    //saturation value
-//    Image image = Cc.transform(Cc.getInstance().getImg(), (Color c, Double d) -> c.deriveColor(0, 1.0/ d, 1.0, 1.0), dLevel);
-//    Cc.getInstance().getImgView().setImage(image);
-//
-//    Cc.getInstance().getSaturationStage().close();
 
 }
