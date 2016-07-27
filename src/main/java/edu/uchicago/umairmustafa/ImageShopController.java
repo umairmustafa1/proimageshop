@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,6 +27,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +58,8 @@ public class ImageShopController implements Initializable {
     private FilterStyle mFilterStyle;
     private Color mColor;
 
+    private String filePath = null;
+
     private double xAnchor, yAnchor;//position of mouse for anchor using marquee tool
     ArrayList<Shape> removeShapes = new ArrayList<>(1000);
 
@@ -78,6 +82,11 @@ public class ImageShopController implements Initializable {
     @FXML private Button bFilter;
 
     @FXML
+    void mnuNewAction(ActionEvent event) {
+        Cc.getInstance().close();
+    }
+
+    @FXML
     void mnuOpenAction(ActionEvent event) {//http://java-buddy.blogspot.com/2013/01/use-javafx-filechooser-to-open-image.html
 
         Cc.getInstance().setImgView(this.imgView);
@@ -90,33 +99,67 @@ public class ImageShopController implements Initializable {
 
         //Show open file dialog
         File file = fileChooser.showOpenDialog(null);
-        //openFile(file);
+        System.out.println(file.getAbsolutePath());
+        filePath = file.getAbsolutePath();
 
         try {
             BufferedImage bufferedImage = ImageIO.read(file);
+            int type = bufferedImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+            BufferedImage resizeImage = resizeImage(bufferedImage, type,(int) Cc.getInstance().getImgView().getFitWidth(),(int)Cc.getInstance().getImgView().getFitHeight()); //Resizing Image to Image View
             ancRoot.getChildren().remove(selectionRect);
-            Cc.getInstance().setImageAndRefreshView(SwingFXUtils.toFXImage(bufferedImage, null));
-
-            //Setting Selection to image after loading it
-            selectionRect = new Rectangle(0, 0, imgView.getImage().getWidth(),imgView.getImage().getHeight());
-            selectionRect.setFill(null);
-            selectionRect.setVisible(false);
+            Cc.getInstance().setImageAndRefreshView(SwingFXUtils.toFXImage(resizeImage, null));
         } catch (IOException ex) {
             Logger.getLogger(ImageShopController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
     @FXML
-    void mnuReOpenLast(ActionEvent event) {
-      //  Cc.getInstance().reOpenLast();
-    }
-    @FXML
     void mnuSaveAction(ActionEvent event) {
+        if(filePath == null){
+            FileChooser fileChooser = new FileChooser();
+
+            //Set extension filter
+            FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
+            FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
+            fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
+
+            File file = fileChooser.showSaveDialog(null);
+            if (file != null) {
+                try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(Cc.getInstance().getImg(), null), "png", file);
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        } else{
+            File file = new File(filePath);
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(Cc.getInstance().getImg(), null), "png", file);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+
 
     }
     @FXML
     void mnuSaveAsAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
 
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
+        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
+        fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
+
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(Cc.getInstance().getImg(), null), "png", file);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
     @FXML
     void mnuQuitAction(ActionEvent event) {
@@ -333,7 +376,6 @@ public class ImageShopController implements Initializable {
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
                                     && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, SATURATE_DESATURATE_FACTOR, 1.0, 1.0) : c
-
                     );
                     break;
 
@@ -341,7 +383,6 @@ public class ImageShopController implements Initializable {
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
                                     && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0, 1.0, OPACITY_FACTOR) : c
-
                     );
                     break;
 
@@ -349,7 +390,6 @@ public class ImageShopController implements Initializable {
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
                                     && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(0, 1.0, 1.0, 1.0 / OPACITY_FACTOR) : c
-
                     );
                     break;
 
@@ -357,7 +397,6 @@ public class ImageShopController implements Initializable {
                     transformImage = Cc.getInstance().transform(Cc.getInstance().getImg(),
                             (x, y, c) -> (x > selectionRect.getX() && x < selectionRect.getX() + selectionRect.getWidth())
                                     && (y > selectionRect.getY() && y < selectionRect.getY() + selectionRect.getHeight()) ? c.deriveColor(HUE_SHIFT, 1.0, 1.0, 1.0) : c
-
                     );
                     break;
 
@@ -484,4 +523,13 @@ public class ImageShopController implements Initializable {
         return Color.rgb((int)r, (int)g, (int)b);
     }
 
+    //https://www.mkyong.com/java/how-to-resize-an-image-in-java/
+    private static BufferedImage resizeImage(BufferedImage originalImage, int type, int width, int height){
+        BufferedImage resizedImage = new BufferedImage(width, height, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, width, height, null);
+        g.dispose();
+
+        return resizedImage;
+    }
 }
