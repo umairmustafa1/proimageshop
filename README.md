@@ -12,7 +12,7 @@ This application is an image editor which lets you open up images and save them.
  * Pen: This tool allows you to draw using square output.
  * Marquee: This tool allows you to select rectangular regions on the image and all the subsequent operations are applied to that region only including draw and bucket.
  * Bucket: This tool allows you to fill an area with selected color.
- * Filter: This tool allows you sample the color on the screen by clicking on it.
+ * Dropper: This tool allows you sample the color on the screen by clicking on it.
 
 # Filters
  * Dark
