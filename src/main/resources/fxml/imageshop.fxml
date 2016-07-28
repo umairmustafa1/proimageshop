@@ -1,81 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox prefHeight="862.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="edu.uchicago.umairmustafa.ImageShopController">
+<VBox prefHeight="862.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.uchicago.umairmustafa.ImageShopController">
     <children>
-        <MenuBar VBox.vgrow="NEVER">
+        <MenuBar prefHeight="70.0" prefWidth="1328.0" VBox.vgrow="NEVER">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuNewAction" text="New"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuOpenAction" text="Open…"/>
+                        <MenuItem mnemonicParsing="false" onAction="#mnuNewAction" text="New" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuOpenAction" text="Open" />
                         <!--<Menu mnemonicParsing="false" text="Open Recent"/>-->
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuCloseAction" text="Close"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuSaveAction" text="Save"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuSaveAsAction" text="Save As…"/>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuCloseAction" text="Close" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuSaveAction" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuSaveAsAction" text="Save As…" />
                         <!--<MenuItem mnemonicParsing="false" onAction="#mnuReOpenLast" text="re-open last"/>-->
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuQuitAction" text="Quit"/>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuQuitAction" text="Quit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuUndo" text="Undo"/>
-                        <MenuItem mnemonicParsing="false" onAction="#mnuRedo" text="Redo"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Cut"/>
-                        <MenuItem mnemonicParsing="false" text="Copy"/>
-                        <MenuItem mnemonicParsing="false" text="Paste"/>
-                        <MenuItem mnemonicParsing="false" text="Delete"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem mnemonicParsing="false" text="Select All"/>
-                        <MenuItem mnemonicParsing="false" text="Unselect All"/>
+                        <MenuItem mnemonicParsing="false" onAction="#mnuUndo" text="Undo" />
+                        <MenuItem mnemonicParsing="false" onAction="#mnuRedo" text="Redo" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Cut" />
+                        <MenuItem mnemonicParsing="false" text="Copy" />
+                        <MenuItem mnemonicParsing="false" text="Paste" />
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Select All" />
+                        <MenuItem mnemonicParsing="false" text="Unselect All" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About"/>
+                        <MenuItem mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-        <ToolBar prefHeight="40.0" prefWidth="1328.0">
+        <ToolBar prefHeight="70.0" prefWidth="1328.0">
             <items>
-                <ColorPicker fx:id="cpkColor"/>
-                <Label text="Pen-Size"/>
-                <Slider fx:id="sldSize" value="50.0"/>
-                <Label text="Filter"/>
-                <ComboBox fx:id="cboSome" prefWidth="150.0"/>
-                <Button fx:id="bFilter" mnemonicParsing="false" text="Apply Filter"/>
+                <ColorPicker fx:id="cpkColor" prefHeight="25.0" prefWidth="100.0" />
+                <Label text="Pen Size">
+               <padding>
+                  <Insets left="10.0" />
+               </padding></Label>
+                <Slider fx:id="sldSize" prefHeight="25.0" prefWidth="100.0" value="50.0" />
+                <Label text="Filter">
+               <padding>
+                  <Insets left="10.0" />
+               </padding></Label>
+                <ComboBox fx:id="cboSome" prefHeight="25.0" prefWidth="100.0" />
+            <Label>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </Label>
+                <Button fx:id="bFilter" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Apply Filter" textAlignment="CENTER" />
             </items>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
         </ToolBar>
         <ScrollPane prefHeight="835.0" prefWidth="1328.0">
             <content>
                 <AnchorPane fx:id="ancRoot" minHeight="0.0" minWidth="0.0" prefHeight="830.0" prefWidth="1329.0">
                     <children>
-                        <ImageView fx:id="imgView" fitHeight="816.0" fitWidth="1279.0" pickOnBounds="true"
-                                   preserveRatio="true"/>
-                        <VBox layoutX="1278.0" prefHeight="786.0" prefWidth="37.0">
+                        <ImageView fx:id="imgView" fitHeight="816.0" fitWidth="1279.0" pickOnBounds="true" preserveRatio="true" />
+                        <VBox id="vbox" layoutX="1278.0" prefHeight="786.0" prefWidth="37.0">
                             <children>
                                 <VBox prefHeight="67.0" prefWidth="37.0">
                                     <children>
-                                        <ToggleButton id = "pencil" fx:id="tgbPencil" mnemonicParsing="false" text="ToggleButton"/>
-                                        <ToggleButton id = "pen" fx:id="tgbPen" mnemonicParsing="false" text="ToggleButton"/>
-                                        <ToggleButton id = "sqrmarquee" fx:id="tgbSqrMarquee" mnemonicParsing="false" text="ToggleButton"/>
-                                        <ToggleButton id = "bucket" fx:id="tgbBucket" mnemonicParsing="false" text="ToggleButton"/>
-                                        <ToggleButton id = "dropper" fx:id="tgbDropper" mnemonicParsing="false" text="ToggleButton"/>
+                                        <ToggleButton id="pencil" fx:id="tgbPencil" mnemonicParsing="false" text="ToggleButton">
+                                 <tooltip>
+                                    <Tooltip text="Pencil Tool" />
+                                 </tooltip></ToggleButton>
+                                        <ToggleButton id="pen" fx:id="tgbPen" mnemonicParsing="false" text="ToggleButton">
+                                 <tooltip>
+                                    <Tooltip text="Pen Tool" />
+                                 </tooltip></ToggleButton>
+                                        <ToggleButton id="sqrmarquee" fx:id="tgbSqrMarquee" mnemonicParsing="false" text="ToggleButton">
+                                 <tooltip>
+                                    <Tooltip text="Marquee Tool" />
+                                 </tooltip></ToggleButton>
+                                        <ToggleButton id="bucket" fx:id="tgbBucket" mnemonicParsing="false" text="ToggleButton">
+                                 <tooltip>
+                                    <Tooltip text="Bucket Tool" />
+                                 </tooltip></ToggleButton>
+                                        <ToggleButton id="dropper" fx:id="tgbDropper" mnemonicParsing="false" text="ToggleButton">
+                                 <tooltip>
+                                    <Tooltip text="Dropper Tool" />
+                                 </tooltip></ToggleButton>
                                     </children>
                                 </VBox>
                             </children>
                             <padding>
-                                <Insets right="5.0"/>
+                                <Insets right="5.0" />
                             </padding>
                         </VBox>
                     </children>

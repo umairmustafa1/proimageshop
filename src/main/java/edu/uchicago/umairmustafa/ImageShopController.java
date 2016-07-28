@@ -9,14 +9,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
+import javafx.scene.*;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -36,11 +36,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-/**
- * SampleGeneric Skeleton for 'imageshop.fxml' Controller Class
- */
-
 
 public class ImageShopController implements Initializable {
 
@@ -178,10 +173,6 @@ public class ImageShopController implements Initializable {
         Cc.getInstance().redo();
     }
 
-    //##################################################################
-    //INITIALIZE METHOD
-    //see: http://docs.oracle.com/javafx/2/ui_controls/jfxpub-ui_controls.htm
-    //##################################################################
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -190,7 +181,7 @@ public class ImageShopController implements Initializable {
 
         //Initializing Class Variables
         mToolToggleGroup = new ToggleGroup();
-        penSize = 50;
+        penSize = 5;
         mTool = Tool.PENCIL;
         tgbPencil.setSelected(true);
         mFilterStyle = FilterStyle.DRK;
@@ -228,6 +219,24 @@ public class ImageShopController implements Initializable {
             }
         });
 
+        imgView.addEventFilter(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                setCursor();
+                event.consume();
+            }
+        });
+
+        imgView.addEventFilter(MouseEvent.MOUSE_EXITED,new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (!(event.getX() > 0 && event.getY() > 0 && event.getX() < imgView.getFitWidth() && event.getY() < imgView.getFitHeight())) {
+                    Cc.getInstance().getMainStage().getScene().setCursor(Cursor.DEFAULT);
+                }
+                event.consume();
+            }
+        });
+
         imgView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
@@ -254,7 +263,7 @@ public class ImageShopController implements Initializable {
                     ancRoot.getChildren().removeAll(removeShapes);//TODO : Understand the reasoning behind removeShapes as it enables undo and redo.
                     ancRoot.getChildren().add(selectionRect);
                     removeShapes.clear();
-                } else if (mTool == Tool.BUCKET) {
+                } else if (mTool == Tool.BUCKET && Cc.getInstance().getImg() != null) {
                     int xPos = (int) me.getX();
                     int yPos = (int) me.getY();
 
@@ -267,7 +276,7 @@ public class ImageShopController implements Initializable {
                         );
                         Cc.getInstance().setImageAndRefreshView(transformImage);
                     }
-                } else if (mTool == Tool.DROPPER){
+                } else if (mTool == Tool.DROPPER && Cc.getInstance().getImg() != null){
                     int xPos = (int) me.getX();
                     int yPos = (int) me.getY();
                     mColor = Cc.getInstance().getImg().getPixelReader().getColor(xPos, yPos);
@@ -531,5 +540,23 @@ public class ImageShopController implements Initializable {
         g.dispose();
 
         return resizedImage;
+    }
+
+    private void setCursor(){
+        if(mTool == Tool.SQRMARQUEE)
+            Cc.getInstance().getMainStage().getScene().setCursor(Cursor.CROSSHAIR);
+        else if(mTool == Tool.DROPPER){
+            Image image = new Image("images/dropper.png");
+            Cc.getInstance().getMainStage().getScene().setCursor(new ImageCursor(image,image.getWidth() / 2,image.getHeight() / 2));
+        }else if(mTool == Tool.BUCKET){
+            Image image = new Image("images/bucket.png");
+            Cc.getInstance().getMainStage().getScene().setCursor(new ImageCursor(image,image.getWidth() / 2,image.getHeight() / 2));
+        }else if(mTool == Tool.PEN){
+            Image image = new Image("images/pen.png");
+            Cc.getInstance().getMainStage().getScene().setCursor(new ImageCursor(image,image.getWidth() / 2,image.getHeight() / 2));
+        }else if(mTool == Tool.PENCIL){
+            Image image = new Image("images/pencil.png");
+            Cc.getInstance().getMainStage().getScene().setCursor(new ImageCursor(image,image.getWidth(),image.getHeight()));
+        }
     }
 }

@@ -1,3 +1,39 @@
+.root {
+    -fx-accent: #888888 ;
+    -fx-focus-color: #888888;
+    -fx-font-family: "Arial Rounded MT Bold";
+}
+
+.menu-bar, .menu-item {
+    -fx-background-color: #888888;
+}
+
+.menu .label, .menu-item .label  {
+    -fx-text-fill: white;
+}
+
+.menu:hover, .menu-item:focused, .combo-box .cell:hover {
+    -fx-background-color: #404040;
+}
+
+.tool-bar {
+    -fx-background-color: #989898;
+}
+
+.tool-bar .label{
+    -fx-text-fill: white;
+}
+
+.button, .combo-box, .color-picker, .combo-box .cell, #vbox{
+    -fx-background-color: #888888;
+    -fx-text-fill: white;
+}
+
+.button:hover, .color-picker:hover, .combo-box:hover, .slider:hover{
+    -fx-border-color: white;
+}
+
+/** Images **/
 #pencil {
     -fx-graphic: url('../images/pencil.png');
 }
@@ -17,5 +53,6 @@
 #dropper {
     -fx-graphic: url('../images/dropper.png');
 }
+
 
 
