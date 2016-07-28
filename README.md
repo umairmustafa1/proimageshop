@@ -1,6 +1,6 @@
 # README #
 
-This application is an image editor which lets you open up images and save them. While working undo/redo operations can be performed as well.
+This application is an image editor which lets you open up images and save them. While working, undo/redo operations can be performed as long as needed.
 
 # UI/UX
  * UI of the application has been styled using different shades of grey. Moreover, its very intuitive in the sense that it highlights focused menu items or buttons on hover.
